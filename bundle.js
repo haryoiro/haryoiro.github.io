@@ -1,1 +1,455 @@
-!function(t){var e={};function n(o){if(e[o])return e[o].exports;var i=e[o]={i:o,l:!1,exports:{}};return t[o].call(i.exports,i,i.exports,n),i.l=!0,i.exports}n.m=t,n.c=e,n.d=function(t,e,o){n.o(t,e)||Object.defineProperty(t,e,{enumerable:!0,get:o})},n.r=function(t){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},n.t=function(t,e){if(1&e&&(t=n(t)),8&e)return t;if(4&e&&"object"==typeof t&&t&&t.__esModule)return t;var o=Object.create(null);if(n.r(o),Object.defineProperty(o,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var i in t)n.d(o,i,function(e){return t[e]}.bind(null,i));return o},n.n=function(t){var e=t&&t.__esModule?function(){return t.default}:function(){return t};return n.d(e,"a",e),e},n.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},n.p="/",n(n.s=0)}([function(t,e){var n=function(){function t(t,e,n,o){this.width=n,this.height=o,this.canvas=t,this.context=e,this.rect=this.canvas.getBoundingClientRect()}return t.prototype.init=function(t,e,n,o){void 0===o&&(o=!1),this.canvasSize(),this.backgroundColor(e),this.hideMenuHandler(n),this._isImageSmoothing(t,o)},t.prototype.getRect=function(){return this.rect=this.canvas.getBoundingRect()},t.prototype.canvasSize=function(){(this.width||this.height)&&(this.canvas.width=this.width,this.canvas.height=this.height,this.context.width=this.width,this.context.height=this.height)},t.prototype.clearAll=function(){this.context.clearRect(0,0,this.width,this.height),this.context.beginPath()},t.prototype.backgroundColor=function(t){this.context.fillStyle=t,this.context.fillRect(0,0,this.width,this.height)},t.prototype.hideMenuHandler=function(t){document.addEventListener("contextmenu",(function(){return t})),document.addEventListener("MSHoldVisal",(function(){return t}))},t.prototype._isImageSmoothing=function(t,e){t.imageSmoothingEnabled=e},t}(),o=[],i=function(){function t(t,e){this.canvasColor="#000",this.defRad=10,this.dx=void 0,this.dy=void 0,this.distX=void 0,this.distY=void 0,this.lx=void 0,this.ly=void 0,this.capStyle="round",this.element=t,this.context=e,this.eventActivation()}return t.prototype.eventActivation=function(){var t=this;this._supportPointerEvent?(document.addEventListener("pointerdown",(function(e){return t.downPointerHandler(e)}),{passive:!1}),document.addEventListener("pointerup",(function(e){return t.upPointerHandler(e)}),{passive:!1}),document.addEventListener("pointermove",(function(e){return t.movePointerHandler(e)}),{passive:!1}),document.addEventListener("pointerleave",(function(e){return t.leavePointerHandler(e)}),{passive:!1})):(document.addEventListener("pointerdown",(function(e){return t.downMouseHandler(e)})),document.addEventListener("pointerup",(function(e){return t.upMouseHandler(e)})),document.addEventListener("pointermove",(function(e){return t.moveMouseHandler(e)})),document.addEventListener("pointerleave",(function(e){return t.leaveMouseHandler(e)})))},t.prototype.downPointerHandler=function(t){t.preventDefault(),this.drawToggle=!0,o.push(t),o.length<=1?(this.baseX=o[0].pageX,this.baseY=o[0].pageY):o.length>=2&&(this.p1=o[0],this.p2=o[1],this.pinchDist=this.calclationDistance(this.p1.pageX,this.p1.pageY,this.p2.pageX,this.p2.pageY))},t.prototype.movePointerHandler=function(t){this.judgmentPointerType(t,{pen:this.handlePenMove(t),touch:this.handleTouchMove(t),mouse:this.handleMouseMove(t)})},t.prototype.judgmentPointerType=function(t,e){switch(t.pointerType){case"pen":e.pen;break;case"touch":e.touch;break;case"mouse":e.mouse}},t.prototype.upPointerHandler=function(t){this.drawToggle=!1,this.context.beginPath(),this._removeEventStack(t)},t.prototype.leavePointerHandler=function(t){this.drawToggle=!1},t.prototype.downMouseHandler=function(t){this.drawToggle=!0},t.prototype.moveMouseHandler=function(t){this.handleMouseMove(t)},t.prototype.upMouseHandler=function(t){this.drawToggle=!1,this.context.beginPath()},t.prototype.leaveMouseHandler=function(t){this.drawToggle=!1},t.prototype.handlePenMove=function(t){t.preventDefault(),this.drawToggle&&this.penPencilTool(t)},t.prototype.handleMouseMove=function(t){this.drawToggle&&this.mousePencilTool(t)},t.prototype.handleTouchMove=function(t){t.preventDefault();for(var e=0;e<o.length;e++)o[e].pointerId==t.pointerId&&(o[e]=t);if(o.length>3&&o.splice(0,3),this.p1=o[0],this.p2=o[1],this.drawToggle&&this.touchPencilTool(o[0]),o.length>=2){this.drawToggle=!1,this.lx=this.lx,this.ly=this.ly,this.dx=(this.p1.pageX+this.p2.pageX)/2,this.dy=(this.p1.pageY+this.p2.pageY)/2,this.distX=Math.abs(this.lx-this.dx),this.distY=Math.abs(this.ly-this.dy);var n=this.calclationDistance(this.p1.pageX,this.p1.pageY,this.p2.pageX,this.p2.pageY);this.nowR=n/this.pinchDist}this._pinchHandle()},t.prototype.mousePencilTool=function(t){var e=this.context;this.eraseTool(e),this.settingPenConf(e),this.drawLine(e,t)},t.prototype.penPencilTool=function(t){var e=this.context;this.eraseTool(e),e.lineWidth=this._activatePressure(t),this.settingPenConf(e),this.drawLine(e,t)},t.prototype.settingPenConf=function(t){t.strokeStyle=this.canvasColor,t.fillStyle=this.canvasColor,t.lineCap=this.capStyle},t.prototype.touchPencilTool=function(t){var e=this.context;this.eraseTool(e),e.lineWidth=this.penRadius,this.settingPenConf(e),this.drawLine(e,t)},t.prototype.drawLine=function(t,e){t.lineTo(e.offsetX,e.offsetY),t.stroke(),t.beginPath(),t.moveTo(e.offsetX,e.offsetY)},t.prototype.eraseTool=function(t){this.eraserToggle?t.globalCompositeOperation="destination-out":t.globalCompositeOperation="source-over"},t.prototype.setPencilColor=function(t){this.canvasColor=t},t.prototype.getNowR=function(){return this.nowR},t.prototype.calclationDistance=function(t,e,n,o){var i=Math.abs(t-n)+Math.abs(e-o);return console.log(i),i},t.prototype._activatePressure=function(t){var e=this.defRad;return t.pressure<.995||t.pressure>.05?(t.pressure?e*=t.pressure:e/=t.pressure,e):t.pressure<=.05||t.pressure>.01?.05:void 0},t.prototype._removeEventStack=function(t){for(var e=0;e<o.length;e++)o[e].pointerId==t.pointerId&&o.splice(e,1)},t.prototype._pinchHandle=function(){var t=document.getElementById("canvas").style,e="scale("+this.nowR+","+this.nowR+")";t.left=this.distX+"px",t.top=this.distY+"px",t.transform=e,t.webkitTransform=e},t.prototype._supportPointerEvent=function(){return!!window.PointerEvent},t.prototype._puressurePoints=function(t){return{x:t.offsetX,y:t.offsetY,pressurevent:Math.sin(t.pressure)}},t.prototype._debugLogger=function(t){if(document.getElementById("debug"))document.getElementById("debug").insertAdjacentHTML("afterbegin",t+"<br>");else{var e=document.createElement("div");e.id="debug",e.insertAdjacentHTML("afterbegin",t+"<br>")}},t}(),r=document.querySelector("#canvas"),s=r.getContext("2d"),a=new n(r,s,1920,1080);new i(r,s);a.init(s,"#ffff",!0,!1)}]);
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "/";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/client/index.ts");
+/******/ })
+/************************************************************************/
+/******/ ({
+
+/***/ "./src/client/index.ts":
+/*!*****************************!*\
+  !*** ./src/client/index.ts ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var Application = /** @class */ (function () {
+    function Application(canvas, context2D) {
+        this.canvas = canvas;
+        this.context2D = context2D;
+    }
+    Application.prototype.setUpView = function (width, height, context2D, color, hide, smooth) {
+        if (smooth === void 0) { smooth = false; }
+        this._settingCanvasSize(width, height);
+        this._backgroundColor(color);
+        this._hideMenuHandler(hide);
+        this._isImageSmoothing(context2D, smooth);
+    };
+    Application.prototype._settingCanvasSize = function (width, height) {
+        this.canvas.width = width;
+        this.canvas.height = height;
+    };
+    Application.prototype.clearAll = function () {
+        this.context2D.clearRect(0, 0, this.width, this.height);
+        this.context2D.beginPath();
+    };
+    Application.prototype._backgroundColor = function (color) {
+        this.context2D.fillStyle = color;
+        this.context2D.fillRect(0, 0, this.width, this.height);
+    };
+    Application.prototype._hideMenuHandler = function (bool) {
+        document.addEventListener('contextmenu', function () { return bool; });
+        document.addEventListener('MSHoldVisal', function () { return bool; });
+    };
+    Application.prototype._isImageSmoothing = function (context2D, bool) {
+        context2D.imageSmoothingEnabled = bool;
+    };
+    Object.defineProperty(Application.prototype, "width", {
+        // *getter/setter Method
+        get: function () {
+            return this._width;
+        },
+        set: function (value) {
+            this._width = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Application.prototype, "height", {
+        get: function () {
+            return this._height;
+        },
+        set: function (value) {
+            this._height = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return Application;
+}());
+var eventStack = [];
+var Tools = /** @class */ (function (_super) {
+    __extends(Tools, _super);
+    function Tools(element, context2D) {
+        var _this = _super.call(this, element, context2D) || this;
+        // ----- ツール関連プロパティ
+        _this.canvasColor = '#000';
+        _this.zoomInvrease = 1;
+        // ----- PenSize用プロパティ -----
+        _this.defRad = 10;
+        _this.dx = 0;
+        _this.dy = 0;
+        _this.lx = void 0;
+        _this.ly = void 0;
+        _this.capStyle = 'round';
+        _this.joinStyle = 'bevel';
+        _this.eventActivation();
+        return _this;
+    }
+    Tools.prototype.eventActivation = function () {
+        var _this = this;
+        if (this._supportPointerEvent) {
+            document.addEventListener('pointerdown', function (event) { return _this.downPointerController(event); }, {
+                passive: false,
+            });
+            document.addEventListener('pointerup', function (event) { return _this.upPointerController(event); }, {
+                passive: false,
+            });
+            document.addEventListener('pointermove', function (event) { return _this.movePointerController(event); }, {
+                passive: false,
+            });
+            document.addEventListener('pointerleave', function () { return _this.leavePointerHandler(); }, {
+                passive: false,
+            });
+        }
+        else {
+            document.addEventListener('mousedown', function () { return _this.downMouseHandler(); });
+            document.addEventListener('mouseup', function () { return _this.upMouseHandler(); });
+            document.addEventListener('mousemove', function (event) { return _this.moveMouseHandler(event); });
+            document.addEventListener('mouseleave', function () { return _this.leaveMouseHandler(); });
+        }
+    };
+    Tools.prototype.pointerSwitcher = function (event, pen, touch, mouse) {
+        switch (event.pointerType) {
+            case 'pen':
+                pen;
+                break;
+            case 'touch':
+                touch;
+                break;
+            case 'mouse':
+                mouse;
+                break;
+        }
+    };
+    // ---- PointerEvents ---
+    // !------ Switcher ------
+    // *- Main Callback Functions -
+    Tools.prototype.downPointerController = function (event) {
+        this.pointerSwitcher(event, this.handlePenDown(event), this.handleTouchDown(event), this.handleMouseDown());
+    };
+    Tools.prototype.movePointerController = function (event) {
+        this.pointerSwitcher(event, this.handlePenMove(event), this.handleTouchMove(event), this.handleMouseMove(event));
+    };
+    Tools.prototype.upPointerController = function (event) {
+        this.pointerSwitcher(event, this.handlePenUp(), this.handleTouchUp(event), this.handleMouseUp());
+    };
+    // ---- PointerEvents ---
+    // *------- DOWN -------
+    Tools.prototype.handlePenDown = function (event) {
+        event.preventDefault();
+        this.drawToggle = true;
+    };
+    Tools.prototype.handleTouchDown = function (event) {
+        event.preventDefault();
+        this.drawToggle = true;
+        if (eventStack.length <= 1) {
+            this.p1 = eventStack[0];
+        }
+        else if (eventStack.length >= 2) {
+            this.p1 = eventStack[0];
+            this.p2 = eventStack[1];
+            this.pinchDist = this._calclationPointsDistance(this.p1.pageX, this.p1.pageY, this.p2.pageX, this.p2.pageY);
+            this.nowR = this.dist / this.pinchDist;
+        }
+    };
+    Tools.prototype.handleMouseDown = function () {
+        this.drawToggle = true;
+    };
+    // ---- PointerEvents ---
+    // *------- MOVE -------
+    Tools.prototype.handlePenMove = function (event) {
+        event.preventDefault();
+        if (this.drawToggle) {
+            this.penPencilTool(event);
+        }
+    };
+    Tools.prototype.handleMouseMove = function (event) {
+        if (this.drawToggle) {
+            this.mousePencilTool(event);
+        }
+    };
+    Tools.prototype.handleTouchMove = function (event) {
+        event.preventDefault();
+        for (var i = 0; i < eventStack.length; i++) {
+            if (eventStack[i].pointerId === event.pointerId) {
+                eventStack[i] = event;
+            }
+        }
+        if (eventStack.length > 3) {
+            eventStack.splice(0, 3);
+        }
+        this.p1 = eventStack[0];
+        this.p2 = eventStack[1];
+        if (this.drawToggle) {
+            this.touchPencilTool(eventStack[0]);
+        }
+        if (eventStack.length >= 2) {
+            this.drawToggle = false;
+            this.dx = (this.p1.pageX + this.p2.pageX) / 2;
+            this.dy = (this.p1.pageY + this.p2.pageY) / 2;
+            this.dist = this._calclationPointsDistance(this.p1.pageX, this.p1.pageY, this.p2.pageX, this.p2.pageY);
+            this.nowR = this.dist / this.pinchDist;
+        }
+        this._pinchHandle();
+    };
+    // ---- PointerEvents ---
+    // *--------  UP  --------
+    Tools.prototype.handlePenUp = function () {
+        this.drawToggle = false;
+        // @ts-ignore
+        this.context2D.beginPath();
+    };
+    Tools.prototype.handleTouchUp = function (event) {
+        this.drawToggle = false;
+        // @ts-ignore
+        this.context2D.beginPath();
+        this._removeEventStack(event);
+    };
+    Tools.prototype.handleMouseUp = function () {
+        this.drawToggle = false;
+        // @ts-ignore
+        this.context2D.beginPath();
+    };
+    // ---- PointerEvents ---
+    // *------- LEAVE -------
+    Tools.prototype.leavePointerHandler = function () {
+        this.drawToggle = false;
+    };
+    // ---- MouseEvents ----
+    // *-- LEGACY EVENTS --
+    Tools.prototype.downMouseHandler = function () {
+        this.drawToggle = true;
+    };
+    Tools.prototype.moveMouseHandler = function (event) {
+        this.handleMouseMove(event);
+        console.log(event);
+    };
+    Tools.prototype.upMouseHandler = function () {
+        this.drawToggle = false;
+        // @ts-ignore
+        this.context2D.beginPath();
+    };
+    Tools.prototype.leaveMouseHandler = function () {
+        this.drawToggle = false;
+    };
+    // ---- PencilTools ----
+    // マウス用PencilTool
+    Tools.prototype.mousePencilTool = function (event) {
+        // Context2D初期化
+        // @ts-ignore
+        var a = this.context2D;
+        // 消しゴムトグル
+        this.eraseTool(a);
+        this.settingPenConf(a, this.canvasColor, this.capStyle, this.joinStyle);
+        this.drawLine(this.context2D, event);
+    };
+    // ペン用PencilTool
+    Tools.prototype.penPencilTool = function (event) {
+        // Context2D初期化
+        // @ts-ignore
+        var a = this.context2D;
+        // 消しゴムトグル
+        this.eraseTool(a);
+        a.lineWidth = this._activatePressure(event);
+        this.settingPenConf(a, this.canvasColor, this.capStyle, this.joinStyle);
+        this.drawLine(this.context2D, event);
+    };
+    Tools.prototype.settingPenConf = function (context, color, capStyle, JoinStyle) {
+        context.strokeStyle = color;
+        context.fillStyle = color;
+        context.lineCap = capStyle;
+        context.lineJoin = JoinStyle;
+    };
+    // タッチ用PencilTool
+    Tools.prototype.touchPencilTool = function (event) {
+        // Context2D初期化
+        // @ts-ignore
+        var a = this.context2D;
+        // 消しゴムトグル
+        this.eraseTool(a);
+        a.lineWidth = this.penRadius;
+        this.settingPenConf(this.context2D, this.canvasColor, this.capStyle, this.joinStyle);
+        this.drawLine(this.context2D, event);
+    };
+    Tools.prototype.drawLine = function (a, event) {
+        console.log('client' + event.clientX, event.clientY);
+        console.log('offset' + event.offsetX, event.offsetY);
+        console.log('page' + event.pageX, event.pageY);
+        a.lineTo(event.offsetX, event.offsetY);
+        a.stroke();
+        a.beginPath();
+        a.moveTo(event.offsetX, event.offsetY);
+    };
+    Tools.prototype.eraseTool = function (a) {
+        this.eraserToggle
+            ? (a.globalCompositeOperation = 'destination-out')
+            : (a.globalCompositeOperation = 'source-over');
+    };
+    Tools.prototype.setPencilColor = function (color) {
+        this.canvasColor = color;
+    };
+    Tools.prototype._calclationPointsDistance = function (p1x, p1y, p2x, p2y) {
+        var X = p1x - p2x;
+        var Y = p1y - p2y;
+        return Math.sqrt(X * X + Y * Y) / 2;
+    };
+    // 筆圧に対応していた場合値を返す
+    Tools.prototype._activatePressure = function (event) {
+        var Rad = this.defRad;
+        if (event.pressure < 0.995 || event.pressure > 0.05) {
+            event.pressure ? (Rad *= event.pressure) : (Rad /= event.pressure);
+            return Rad;
+        }
+        else if (event.pressure <= 0.05 || event.pressure > 0.01) {
+            return 0.05;
+        }
+        else {
+            return;
+        }
+    };
+    // タッチイベントをスタックから削除
+    Tools.prototype._removeEventStack = function (event) {
+        for (var i = 0; i < eventStack.length; i++) {
+            if (eventStack[i].pointerId === event.pointerId) {
+                eventStack.splice(i, 1);
+            }
+        }
+    };
+    // ピンチズーム処理
+    Tools.prototype._pinchHandle = function () {
+        var style = document.getElementById('canvas').style;
+        var scale = "scale(" + this.nowR + "," + this.nowR + ")";
+        style.left = this.distX + 'px';
+        style.top = this.distY + 'px';
+        style.transform = scale;
+        style.webkitTransform = scale;
+    };
+    Tools.prototype._supportPointerEvent = function () {
+        return window.PointerEvent ? true : false;
+    };
+    Tools.prototype._puressurePoints = function (event) {
+        return {
+            x: event.offsetX,
+            y: event.offsetY,
+            pressurevent: event.pressure,
+        };
+    };
+    // ----- 画面上にデバッグ情報が流れる
+    Tools.prototype._debugLogger = function (message) {
+        if (document.getElementById('debug')) {
+            document.getElementById('debug').insertAdjacentHTML('afterbegin', message + '<br>');
+        }
+        else {
+            var el = document.createElement('div');
+            el.id = 'debug';
+            el.insertAdjacentHTML('afterbegin', message + '<br>');
+        }
+    };
+    return Tools;
+}(Application));
+var graph = document.querySelector('#canvas');
+var c = graph.getContext('2d');
+var app = new Tools(graph, c);
+// Application.prototype.init
+//    (context , backgroundColor, hideMenu, smoothRendering)
+app.setUpView(1920, 1080, c, '#ffff', true, false);
+
+
+/***/ })
+
+/******/ });
+//# sourceMappingURL=index.js.map
